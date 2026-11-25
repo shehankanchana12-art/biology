@@ -2,8 +2,9 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 
 export default defineConfig({
-  // Relative base so the same build works on a GitHub Pages project site
-  // (/biology/) as well as on a custom domain or at the domain root.
+  // GitHub Pages serves this project under /biology/, not the domain root.
+  // A relative base keeps the same build working there, on a custom domain and
+  // at the domain root alike.
   base: "./",
   plugins: [react()],
   server: {
