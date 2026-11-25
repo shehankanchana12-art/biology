@@ -10,7 +10,7 @@ export const CYCAS_CYCLE: LifeCycle = {
   stages: [
     {
       name: "ස්පෝර නිපදවීම",
-      short: "ස්පෝර (n)",
+      short: "මයෝසිස් → ස්පෝර (n)",
       term: "Microspores & megaspores",
       ploidy: "2n → n",
       detail:
