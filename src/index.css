@@ -1,0 +1,88 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+  --grid: rgba(45, 212, 191, 0.06);
+}
+
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  @apply bg-ink-950 font-sinhala text-slate-200 antialiased;
+  background-image:
+    radial-gradient(1100px 700px at 12% -10%, rgba(45, 212, 191, 0.12), transparent 60%),
+    radial-gradient(900px 600px at 92% 0%, rgba(99, 102, 241, 0.14), transparent 55%),
+    linear-gradient(180deg, #060a12 0%, #04070d 100%);
+  background-attachment: fixed;
+}
+
+::selection {
+  background: rgba(45, 212, 191, 0.35);
+  color: #f8fafc;
+}
+
+::-webkit-scrollbar {
+  width: 9px;
+  height: 9px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #1c2b42;
+  border-radius: 999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #2b405f;
+}
+
+@layer components {
+  .panel {
+    @apply rounded-2xl border border-white/10 bg-ink-850/70 backdrop-blur-xl;
+  }
+  .panel-soft {
+    @apply rounded-xl border border-white/[0.07] bg-white/[0.03];
+  }
+  .chip {
+    @apply inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/[0.04] px-2.5 py-1 text-[11px] leading-none text-slate-300 transition hover:border-white/25 hover:text-white;
+  }
+  .chip-active {
+    @apply border-lab-teal/60 bg-lab-teal/15 text-lab-teal;
+  }
+  .label-eyebrow {
+    @apply text-[10px] font-semibold uppercase tracking-[0.22em] text-lab-teal/80;
+  }
+  .section-title {
+    @apply font-display text-lg font-semibold text-white;
+  }
+  .scan-grid {
+    background-image: linear-gradient(var(--grid) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+    background-size: 34px 34px;
+  }
+}
+
+.drawer-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: #1f3149 transparent;
+}
+
+.text-balance {
+  text-wrap: balance;
+}
+
+/* Sinhala line-height tuning */
+.si-body {
+  line-height: 1.95;
+  letter-spacing: 0.005em;
+}
