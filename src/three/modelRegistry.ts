@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
  * described by `manifest.json`. If the folder is empty the app quietly falls
  * back to the built-in procedural organ art, so nothing breaks.
  */
-export const MODEL_BASE = "/models/anatomy/";
+export const MODEL_BASE = `${import.meta.env.BASE_URL}models/anatomy/`;
 
 export type ModelSpec = {
   /** organ id, e.g. "heart" */

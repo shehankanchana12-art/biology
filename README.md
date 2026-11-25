@@ -31,6 +31,21 @@ npm run build     # production build
 npm run preview   # preview the production build
 ```
 
+## Deploying to GitHub Pages
+
+The site is a static build (`dist/`) and `vite.config.ts` uses a relative `base`,
+so it works at `https://<user>.github.io/<repo>/` as well as on a custom domain.
+
+`.github/workflows/deploy-pages.yml` builds and publishes it on every push to
+`main`. One-time repository setting:
+
+**Settings → Pages → Build and deployment → Source: “GitHub Actions”**
+
+After the next push, the “Deploy to GitHub Pages” action publishes to
+`https://<user>.github.io/<repo>/`. Serving the repository *source* (index.html
+references `/src/main.tsx`) always gives a blank page — only the built `dist/`
+output is runnable.
+
 ## 3D models (Blender)
 
 The anatomy viewer can render real organ models exported from Blender as glTF/GLB.
