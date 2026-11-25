@@ -4,6 +4,8 @@ import { Html, OrbitControls } from "@react-three/drei";
 import * as THREE from "three";
 import { MathUtils } from "three";
 import { BodyGhost, OrganArt } from "./OrganArt";
+import { OrganModel } from "./OrganModel";
+import type { ModelMap, ModelSpec } from "./modelRegistry";
 import { ORGAN_VISUALS, finalPosition, visualById, type OrganVisual } from "./organConfig";
 import { anatomyById } from "../data/anatomy";
 
@@ -12,6 +14,7 @@ type SceneProps = {
   exploded: boolean;
   selected: string | null;
   hiddenSystems: string[];
+  models?: ModelMap;
   onSelect: (id: string | null) => void;
 };
 
@@ -20,12 +23,14 @@ function OrganNode({
   exploded,
   selected,
   hidden,
+  model,
   onSelect,
 }: {
   v: OrganVisual;
   exploded: boolean;
   selected: string | null;
   hidden: boolean;
+  model?: ModelSpec;
   onSelect: (id: string | null) => void;
 }) {
   const ref = useRef<THREE.Group>(null);
@@ -69,7 +74,11 @@ function OrganNode({
           document.body.style.cursor = "auto";
         }}
       >
-        <OrganArt id={v.id} active={active || hovered} />
+        {model ? (
+          <OrganModel spec={model} active={active} hovered={hovered} />
+        ) : (
+          <OrganArt id={v.id} active={active || hovered} />
+        )}
       </group>
       {(active || hovered) && !hidden && entry && (
         <Html
@@ -149,7 +158,7 @@ function LabRings() {
   );
 }
 
-function SceneContent({ sex, exploded, selected, hiddenSystems, onSelect }: SceneProps) {
+function SceneContent({ sex, exploded, selected, hiddenSystems, models, onSelect }: SceneProps) {
   return (
     <>
       <ambientLight intensity={0.85} />
@@ -168,6 +177,7 @@ function SceneContent({ sex, exploded, selected, hiddenSystems, onSelect }: Scen
           exploded={exploded}
           selected={selected}
           hidden={hiddenSystems.includes(v.system)}
+          model={models?.[v.id]}
           onSelect={onSelect}
         />
       ))}

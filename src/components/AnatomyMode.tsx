@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import {
+  Boxes,
   Eye,
   EyeOff,
   Layers,
@@ -11,6 +12,7 @@ import {
   Users,
 } from "lucide-react";
 import { AnatomyScene } from "../three/AnatomyScene";
+import { useModelManifest } from "../three/modelRegistry";
 import { ANATOMY } from "../data/anatomy";
 import { SYSTEMS } from "../data/anatomy/systems";
 import type { StudyEntry } from "../data/types";
@@ -27,9 +29,18 @@ export function AnatomyMode({
   const [hidden, setHidden] = useState<string[]>([]);
   const [resetKey, setResetKey] = useState(0);
 
+  const models = useModelManifest();
+  const [useModels, setUseModels] = useState(true);
+  const modelCount = Object.keys(models).length;
+
   const visibleOrgans = useMemo(
     () => ANATOMY.filter((o) => !o.sex || o.sex === sex),
     [sex]
+  );
+
+  const activeModels = useMemo(
+    () => (useModels ? models : {}),
+    [models, useModels]
   );
 
   const toggleSystem = (id: string) => {
@@ -77,6 +88,21 @@ export function AnatomyMode({
               <ScanLine size={11} className="text-lab-teal" />
               {visibleOrgans.length} අවයව · 3D
             </span>
+            {modelCount > 0 && (
+              <button
+                onClick={() => setUseModels((v) => !v)}
+                title="Blender මාදිලි සහ රූප සටහන් මාරු කරන්න"
+                className={[
+                  "flex items-center gap-1.5 rounded-md border px-2 py-1.5 text-[10px] backdrop-blur transition",
+                  useModels
+                    ? "border-lab-teal/40 bg-lab-teal/15 text-lab-teal"
+                    : "border-white/10 bg-ink-900/70 text-slate-400 hover:text-white",
+                ].join(" ")}
+              >
+                <Boxes size={11} />
+                {useModels ? `මාදිලි ${modelCount}` : "රූප සටහන්"}
+              </button>
+            )}
             <button
               onClick={reset}
               className="grid h-8 w-8 place-items-center rounded-md border border-white/10 bg-ink-900/70 text-slate-400 transition hover:border-white/25 hover:text-white"
@@ -94,6 +120,7 @@ export function AnatomyMode({
             exploded={exploded}
             selected={selectedId}
             hiddenSystems={hidden}
+            models={activeModels}
             onSelect={(id) => {
               if (!id) return onSelect(null);
               const entry = ANATOMY.find((o) => o.id === id);

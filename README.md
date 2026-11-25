@@ -31,6 +31,15 @@ npm run build     # production build
 npm run preview   # preview the production build
 ```
 
+## 3D models (Blender)
+
+The anatomy viewer can render real organ models exported from Blender as glTF/GLB.
+Export one organ per file, drop it in `public/models/anatomy/`, and list it in
+`public/models/anatomy/manifest.json` — models are auto-centred, auto-scaled and
+lazy-loaded, and any organ without a model keeps its schematic art. A `මාදිලි`
+toggle in the toolbar switches between the two views. Full guide, organ ids and
+export settings: [docs/3D-MODELS.md](docs/3D-MODELS.md).
+
 ## Stack
 
 Vite · React 18 · TypeScript · Tailwind CSS · Framer Motion · React Three Fiber / drei · Lucide
