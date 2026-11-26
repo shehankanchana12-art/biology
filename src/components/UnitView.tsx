@@ -1,14 +1,19 @@
+import { useState } from "react";
 import { motion } from "framer-motion";
 import {
   ArrowRight,
   BookOpen,
   CheckCircle2,
+  ChevronDown,
   HeartPulse,
   Leaf,
+  Lightbulb,
   Microscope,
+  NotebookPen,
   Target,
 } from "lucide-react";
 import { UNITS } from "../data/units";
+import { notesForUnit, type NoteGroup, type UnitNotes } from "../data/unitNotes";
 import type { View } from "../App";
 import type { ModeId } from "../data/types";
 
@@ -17,6 +22,145 @@ const modeMeta: Record<ModeId, { si: string; icon: typeof HeartPulse; color: str
   plants: { si: "ශාක සිමියුලේටර්", icon: Leaf, color: "text-emerald-300" },
   organisms: { si: "ජීවී විවිධත්ව සිමියුලේටර්", icon: Microscope, color: "text-sky-300" },
 };
+
+function NoteGroupCard({
+  group,
+  index,
+  open,
+  onToggle,
+}: {
+  group: NoteGroup;
+  index: number;
+  open: boolean;
+  onToggle: () => void;
+}) {
+  return (
+    <div className="overflow-hidden rounded-xl border border-white/[0.08] bg-white/[0.02]">
+      <button
+        onClick={onToggle}
+        className="flex w-full items-start gap-2.5 px-3.5 py-3 text-left transition hover:bg-white/[0.03]"
+        aria-expanded={open}
+      >
+        <span className="mt-[1px] font-display text-[10px] font-bold text-lab-teal/60">
+          {String(index + 1).padStart(2, "0")}
+        </span>
+        <span className="min-w-0 flex-1">
+          <span className="si-body block font-display text-[12.5px] font-semibold leading-snug text-white">
+            {group.title}
+          </span>
+          {group.en && (
+            <span className="mt-0.5 block text-[9.5px] italic text-slate-500">{group.en}</span>
+          )}
+        </span>
+        <ChevronDown
+          size={14}
+          className={`mt-0.5 shrink-0 text-slate-500 transition-transform ${open ? "rotate-180" : ""}`}
+        />
+      </button>
+
+      {open && (
+        <div className="border-t border-white/[0.06] px-3.5 pb-3.5 pt-3">
+          {group.intro && (
+            <p className="si-body mb-2.5 text-[11.5px] leading-relaxed text-slate-400">
+              {group.intro}
+            </p>
+          )}
+          <ul className="space-y-2.5">
+            {group.items.map((item, i) => (
+              <li key={i} className="flex gap-2">
+                <span className="mt-[7px] h-1 w-1 shrink-0 rounded-full bg-lab-teal/70" />
+                <div className="min-w-0 flex-1">
+                  {item.term && (
+                    <p className="si-body text-[12px] font-semibold leading-relaxed text-slate-100">
+                      {item.term}
+                      {item.en && (
+                        <span className="ml-1.5 align-middle font-sans text-[9.5px] font-normal italic text-sky-300/80">
+                          {item.en}
+                        </span>
+                      )}
+                    </p>
+                  )}
+                  {item.text && (
+                    <p className="si-body mt-0.5 text-[11.5px] leading-[1.85] text-slate-300">
+                      {item.text}
+                    </p>
+                  )}
+                  {item.sub && item.sub.length > 0 && (
+                    <ul className="mt-1.5 space-y-1.5 border-l border-lab-teal/20 pl-2.5">
+                      {item.sub.map((s, j) => (
+                        <li key={j} className="si-body text-[11px] leading-[1.8] text-slate-400">
+                          {s}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function UnitNotesPanel({ notes }: { notes: UnitNotes }) {
+  const [open, setOpen] = useState<boolean[]>(() =>
+    notes.groups.map((_, i) => i === 0),
+  );
+
+  const allOpen = open.every(Boolean);
+
+  return (
+    <section className="mt-6">
+      <div className="mb-2 flex flex-wrap items-center gap-2">
+        <h2 className="flex items-center gap-2 font-display text-[15px] font-semibold text-white">
+          <NotebookPen size={15} className="text-lab-teal" />
+          සම්පූර්ණ පාඩම් සටහන්
+        </h2>
+        <button
+          onClick={() => setOpen(notes.groups.map(() => !allOpen))}
+          className="ml-auto rounded-md border border-white/10 px-2 py-1 text-[9.5px] text-slate-400 transition hover:border-white/25 hover:text-white"
+        >
+          {allOpen ? "සියල්ල වසන්න" : "සියල්ල විවෘත කරන්න"}
+        </button>
+      </div>
+      <p className="mb-2.5 text-[10px] text-slate-500">
+        {notes.groups.length} කොටස් · විෂය නිර්දේශයට අදාළ සාරාංශ සටහන්
+      </p>
+
+      <div className="space-y-1.5">
+        {notes.groups.map((group, i) => (
+          <NoteGroupCard
+            key={group.title}
+            group={group}
+            index={i}
+            open={open[i] ?? false}
+            onToggle={() =>
+              setOpen((prev) => prev.map((v, j) => (j === i ? !v : v)))
+            }
+          />
+        ))}
+      </div>
+
+      {notes.tips && notes.tips.length > 0 && (
+        <div className="mt-3 rounded-xl border border-amber-400/20 bg-amber-400/[0.05] p-3.5">
+          <p className="mb-2 flex items-center gap-1.5 text-[10.5px] font-medium text-amber-300">
+            <Lightbulb size={12} /> විභාග ඉලක්කගත විශේෂ කරුණු
+          </p>
+          <ul className="space-y-2">
+            {notes.tips.map((tip, i) => (
+              <li key={i} className="flex gap-2">
+                <span className="mt-[7px] h-1 w-1 shrink-0 rounded-full bg-amber-300/70" />
+                <p className="si-body text-[11.5px] leading-[1.85] text-slate-300">{tip}</p>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+    </section>
+  );
+}
 
 export function UnitView({
   id,
@@ -27,6 +171,7 @@ export function UnitView({
 }) {
   const unit = UNITS.find((u) => u.id === id) ?? UNITS[0];
   const next = UNITS.find((u) => u.id === id + 1);
+  const notes = notesForUnit(unit.id);
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-6 sm:px-6 sm:py-9">
@@ -88,6 +233,8 @@ export function UnitView({
           </div>
         ))}
       </div>
+
+      {notes && <UnitNotesPanel key={unit.id} notes={notes} />}
 
       {unit.mode && (
         <button
